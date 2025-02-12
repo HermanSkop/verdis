@@ -18,6 +18,13 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 public class AppConfig {
+    public static final String USERNAME_PATTERN = "^[a-zA-Z0-9]{3,20}$";
+    public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";
+    public static final String EMAIL_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+    public static final String USERNAME_PATTERN_MESSAGE = "Username must be between 3 and 20 characters long and contain only letters and numbers.";
+    public static final String PASSWORD_PATTERN_MESSAGE = "Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one number.";
+    public static final String EMAIL_PATTERN_MESSAGE = "Email must be a valid email address.";
 
     @Bean
     public DataSource dataSource() {
@@ -42,7 +49,7 @@ public class AppConfig {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.put("hibernate.show_sql", "true");
-        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("hibernate.hbm2ddl.auto", "create-drop");
         properties.put("hibernate.format_sql", "true");
         return properties;
     }
