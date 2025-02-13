@@ -31,7 +31,7 @@ public class Discussion {
     private Account author;
 
     @OneToMany(mappedBy = "discussion")
-    private List<Comment> comments;
+    private List<Comment> comments = List.of();
 
     @NotBlank
     private String title;

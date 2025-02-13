@@ -31,9 +31,9 @@ public class BootstrapDB {
     @Transactional
     public void loadData() {
         if (userRepository.count() == 0) {
-            User user1 = User.builder().username("admin").password("Admin123").email("exampleadmin@mail.com")
+            User user1 = User.builder().username("admin").password("Admin1234").email("exampleadmin@mail.com")
                     .archivedDiscussions(new ArrayList<>()).comments(new ArrayList<>()).build();
-            User user2 = User.builder().username("user").password("User123").email("exampleuser@mail.com")
+            User user2 = User.builder().username("user").password("User1234").email("exampleuser@mail.com")
                     .archivedDiscussions(new ArrayList<>()).comments(new ArrayList<>()).build();
 
             Discussion discussion1 = Discussion.builder().title("Discussion 1").content("This is a discussion.")

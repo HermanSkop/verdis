@@ -30,12 +30,12 @@ public abstract class Account {
     private String password;
 
     @Pattern(regexp = AppConfig.EMAIL_PATTERN, message = AppConfig.EMAIL_PATTERN_MESSAGE)
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "archivedBy")
-    private List<Discussion> archivedDiscussions;
+    private List<Discussion> archivedDiscussions = List.of();
 
     @OneToMany(mappedBy = "author")
-    private List<Discussion> authoredDiscussions;
+    private List<Discussion> authoredDiscussions = List.of();
 }

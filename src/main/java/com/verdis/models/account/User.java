@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 public class User extends Account {
     @OneToMany(mappedBy = "user")
-    private List<Comment> comments;
+    private List<Comment> comments = List.of();
 
     @PrePersist
     @PreUpdate
