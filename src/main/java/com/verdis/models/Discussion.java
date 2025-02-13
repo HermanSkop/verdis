@@ -3,6 +3,7 @@ package com.verdis.models;
 import com.verdis.models.account.Account;
 import com.verdis.models.account.Admin;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,12 @@ public class Discussion {
 
     @OneToMany(mappedBy = "discussion")
     private List<Comment> comments;
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String content;
 
     public boolean isArchived() {
         return archivedBy != null;

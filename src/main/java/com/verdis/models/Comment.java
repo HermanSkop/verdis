@@ -31,8 +31,4 @@ public class Comment {
     @JoinColumn(nullable = false)
     private Discussion discussion;
 
-    public User getUser() {
-        return user;
-    }
-
 }
