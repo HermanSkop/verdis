@@ -25,7 +25,6 @@ public abstract class Account {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Pattern(regexp = AppConfig.PASSWORD_PATTERN, message = AppConfig.PASSWORD_PATTERN_MESSAGE)
     @Column(name = "password", nullable = false)
     private String password;
 

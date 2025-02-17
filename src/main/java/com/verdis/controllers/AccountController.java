@@ -2,11 +2,13 @@ package com.verdis.controllers;
 
 import com.verdis.dtos.RegisterDto;
 import com.verdis.services.AccountService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AccountController {
@@ -31,5 +33,11 @@ public class AccountController {
     public String register(@ModelAttribute("registerDto") RegisterDto registerDto) {
         accountService.register(registerDto);
         return "redirect:/";
+    }
+
+    @GetMapping("/activate")
+    public String activate(@RequestParam("token") String token) {
+        accountService.activate(token);
+        return "redirect:/login";
     }
 }

@@ -21,6 +21,9 @@ public class User extends Account {
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = List.of();
 
+    @Column(unique = true)
+    private String activationToken;
+
     @PrePersist
     @PreUpdate
     private void validate() {
