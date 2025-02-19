@@ -40,7 +40,8 @@ public class SecurityConfig {
                             if (sessionId != null) sessionRepository.deleteById(sessionId);
                             request.getSession().invalidate();
                         })
-                        .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                        .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/login"))
+
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
