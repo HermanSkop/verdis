@@ -27,14 +27,38 @@
 
     <div th:if="${accountDto.role.name()=='ROLE_ADMIN'}">
         <h2 class="mt-4">Invite an Administrator</h2>
-        <form th:action="@{/invite}" method="post">
+        <form id="inviteForm">
             <div class="input-group">
-                <input type="email" class="form-control border-primary" name="email" placeholder="Enter email" aria-label="Recipient's email" required>
+                <input type="email" class="form-control border-primary" name="email" id="email" placeholder="Enter email" required>
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Send Invitation</button>
                 </div>
             </div>
         </form>
+        <script>
+            document.getElementById("inviteForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                let email = document.getElementById("email").value;
+
+                fetch("/invite", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "email=" + encodeURIComponent(email)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            document.getElementById("responseMessage").innerHTML = "<p class='text-success'>Invitation sent successfully!</p>";
+                        } else {
+                            document.getElementById("responseMessage").innerHTML = "<p class='text-danger'>Failed to send invitation.</p>";
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
+        </script>
+
+        <div id="responseMessage"></div>
+
     </div>
 </div>
 </body>
