@@ -22,15 +22,16 @@ public abstract class Account {
     private Long id;
 
     @Pattern(regexp = AppConfig.USERNAME_PATTERN, message = AppConfig.USERNAME_PATTERN_MESSAGE)
-    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false)
     private String password;
 
     @Pattern(regexp = AppConfig.EMAIL_PATTERN, message = AppConfig.EMAIL_PATTERN_MESSAGE)
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(unique = true)
+    private String activationToken;
 
     @OneToMany(mappedBy = "archivedBy")
     private List<Discussion> archivedDiscussions = List.of();

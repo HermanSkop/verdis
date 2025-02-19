@@ -7,8 +7,6 @@ import com.verdis.mappers.AccountMapper;
 import com.verdis.services.AccountService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,8 +58,12 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("registerDto") RegisterDto registerDto) {
-        accountService.register(registerDto);
+    public String register(@Valid @ModelAttribute("registerDto") RegisterDto registerDto, @RequestParam("admin") String token) {
+        if (token != null) {
+            accountService.registerAdmin(registerDto, token);
+        } else {
+            accountService.registerUser(registerDto);
+        }
         return "redirect:/login";
     }
 
@@ -70,12 +72,16 @@ public class AccountController {
         accountService.activate(token);
         return "redirect:/login";
     }
-    @GetMapping("/user/test")
-    public String test() {
-        return "home";
+
+    @GetMapping("/account")
+    public String account(Model model, HttpSession session) {
+        model.addAttribute("accountDto", session.getAttribute("user"));
+        return "account";
     }
-    @GetMapping("/admin/test")
-    public String atest() {
-        return "home";
+
+    @PostMapping("/invite")
+    public String invite(@RequestParam("email") String email) {
+        accountService.invite(email);
+        return "redirect:/";
     }
 }

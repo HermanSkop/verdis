@@ -3,12 +3,14 @@ package com.verdis.services;
 import com.verdis.config.security.PasswordEncoder;
 import com.verdis.dtos.LoginDto;
 import com.verdis.dtos.RegisterDto;
+import com.verdis.mappers.AdminMapper;
 import com.verdis.mappers.UserMapper;
 import com.verdis.models.account.Account;
+import com.verdis.models.account.Admin;
 import com.verdis.models.account.User;
 import com.verdis.repositories.AccountRepository;
+import com.verdis.repositories.AdminRepository;
 import com.verdis.repositories.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +25,22 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AdminMapper adminMapper;
     private final MailService mailService;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, UserRepository userRepository, UserMapper userMapper, MailService mailService) {
+    public AccountService(AccountRepository accountRepository, UserRepository userRepository, UserMapper userMapper, AdminMapper adminMapper, MailService mailService, AdminRepository adminRepository) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.adminMapper = adminMapper;
         this.mailService = mailService;
+        this.adminRepository = adminRepository;
     }
 
     @Transactional
-    public void register(@Valid RegisterDto registerDto) {
+    public void registerUser(@Valid RegisterDto registerDto) {
         validateRegisterDto(registerDto);
 
         User user = userMapper.toEntityFromRegisterDto(registerDto);
@@ -82,5 +88,31 @@ public class AccountService {
                 throw new IllegalArgumentException("Account not activated");
         }
         return account;
+    }
+
+    public void invite(String email) {
+        mailService.sendEmail(email, "Invitation",
+                "You have been invited to join Verdis as an administrator. \nUse the following link to register: "
+                        + generateInvitation(email));
+    }
+
+    private String generateInvitation(String email) {
+        String token = generateToken(16);
+        adminRepository.save(Admin.builder().activationToken(token).email(email).build());
+        return "http://localhost:8080/register?admin=" + token;
+    }
+
+    public void registerAdmin(@Valid RegisterDto registerDto, String token) {
+        Admin admin = adminRepository.findByActivationToken(token).orElseThrow(() -> new IllegalArgumentException("Invalid invitation token"));
+        validateRegisterDto(registerDto);
+        if (!admin.getEmail().equals(registerDto.getEmail())) {
+            throw new IllegalArgumentException("Email does not match the invited one: " + admin.getEmail());
+        }
+
+        admin.setUsername(registerDto.getUsername());
+        admin.setPassword(PasswordEncoder.encryptPassword(registerDto.getPassword()));
+        admin.setActivationToken(null);
+
+        accountRepository.save(admin);
     }
 }

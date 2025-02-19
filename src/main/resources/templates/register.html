@@ -44,6 +44,8 @@
         </div>
         <div class="card-body">
             <form th:action="@{/register}" method="post" th:object="${registerDto}">
+                <input type="hidden" name="admin" th:value="${param.admin}" />
+
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" th:field="*{username}" required />

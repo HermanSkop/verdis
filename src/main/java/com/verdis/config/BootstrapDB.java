@@ -1,8 +1,11 @@
 package com.verdis.config;
 
+import com.verdis.config.security.PasswordEncoder;
 import com.verdis.models.Comment;
 import com.verdis.models.Discussion;
+import com.verdis.models.account.Admin;
 import com.verdis.models.account.User;
+import com.verdis.repositories.AdminRepository;
 import com.verdis.repositories.CommentRepository;
 import com.verdis.repositories.DiscussionRepository;
 import com.verdis.repositories.UserRepository;
@@ -19,22 +22,24 @@ public class BootstrapDB {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final DiscussionRepository discussionRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public BootstrapDB(UserRepository userRepository, CommentRepository commentRepository, DiscussionRepository discussionRepository) {
+    public BootstrapDB(UserRepository userRepository, CommentRepository commentRepository, DiscussionRepository discussionRepository, AdminRepository adminRepository) {
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.discussionRepository = discussionRepository;
+        this.adminRepository = adminRepository;
     }
 
     @PostConstruct
     @Transactional
     public void loadData() {
         if (userRepository.count() == 0) {
-            User user1 = User.builder().username("admin").password("Admin1234").email("exampleadmin@mail.com")
+            User user1 = User.builder().username("user").password(PasswordEncoder.encryptPassword("User1234")).email("exampleuser@mail.com")
                     .archivedDiscussions(new ArrayList<>()).comments(new ArrayList<>()).build();
-            User user2 = User.builder().username("user").password("User1234").email("exampleuser@mail.com")
-                    .archivedDiscussions(new ArrayList<>()).comments(new ArrayList<>()).build();
+            Admin admin = Admin.builder().username("admin").password(PasswordEncoder.encryptPassword("Admin1234")).email("exampleadmin@mail.com")
+                    .archivedDiscussions(new ArrayList<>()).build();
 
             Discussion discussion1 = Discussion.builder().title("Discussion 1").content("This is a discussion.")
                     .author(user1).build();
@@ -44,7 +49,7 @@ public class BootstrapDB {
             user1.setComments(List.of(comment1));
 
             userRepository.save(user1);
-            userRepository.save(user2);
+            adminRepository.save(admin);
             discussionRepository.save(discussion1);
             commentRepository.save(comment1);
 
