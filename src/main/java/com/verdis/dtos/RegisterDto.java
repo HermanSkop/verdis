@@ -1,6 +1,7 @@
 package com.verdis.dtos;
 
 import com.verdis.config.AppConfig;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,4 +24,9 @@ public class RegisterDto implements Serializable {
     private String repeatPassword;
     @Pattern(message = AppConfig.EMAIL_PATTERN_MESSAGE, regexp = AppConfig.EMAIL_PATTERN)
     private String email;
+
+    @AssertTrue(message = "Passwords do not match")
+    public boolean isPasswordMatching() {
+        return password != null && password.equals(repeatPassword);
+    }
 }

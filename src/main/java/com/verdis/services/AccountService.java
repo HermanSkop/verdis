@@ -1,12 +1,16 @@
 package com.verdis.services;
 
 import com.verdis.config.security.PasswordEncoder;
+import com.verdis.dtos.LoginDto;
 import com.verdis.dtos.RegisterDto;
 import com.verdis.mappers.UserMapper;
+import com.verdis.models.account.Account;
 import com.verdis.models.account.User;
 import com.verdis.repositories.AccountRepository;
 import com.verdis.repositories.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +34,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void register(RegisterDto registerDto) {
+    public void register(@Valid RegisterDto registerDto) {
         validateRegisterDto(registerDto);
 
         User user = userMapper.toEntityFromRegisterDto(registerDto);
@@ -63,5 +67,20 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
         user.setActivationToken(null);
         accountRepository.save(user);
+    }
+
+    public Account authenticate(@Valid LoginDto loginDto) {
+        Account account = accountRepository.findByUsername(loginDto.getUsernameOrEmail())
+                .orElseGet(() -> accountRepository.findByEmail(loginDto.getUsernameOrEmail())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid username or email: " +
+                                loginDto.getUsernameOrEmail())));
+        if (!PasswordEncoder.matches(loginDto.getPassword(), account.getPassword()))
+            throw new IllegalArgumentException("Invalid password " + loginDto.getPassword());
+
+        if (account instanceof User user) {
+            if (user.getActivationToken() != null)
+                throw new IllegalArgumentException("Account not activated");
+        }
+        return account;
     }
 }
