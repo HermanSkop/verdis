@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${discussion.title}">Discussion</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="~{fragments/base :: navbar}"></div>
+<div class="container mt-4">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 th:text="${discussion.title}">Discussion Title</h2>
+      <small>
+        By <span th:text="${discussion.author.username}">Author</span>
+        on <span th:text="${#temporals.format(discussion.createdDateTime, 'yyyy-MM-dd HH:mm')}">Created Date</span>
+      </small>
+      <div th:if="${discussion.archivedBy != null}" class="badge badge-danger ml-2">Archived</div>
+    </div>
+    <div class="card-body">
+      <p th:text="${discussion.content}">Discussion content goes here...</p>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <h4>Comments</h4>
+    <div class="list-group">
+      <div class="list-group-item" th:each="comment : ${discussion.comments}">
+        <div class="d-flex justify-content-between">
+          <span class="font-weight-bold" th:text="${comment.author.username}">Username</span>
+          <span class="text-muted" th:text="${#temporals.format(comment.createdDateTime, 'yyyy-MM-dd HH:mm')}">2025-02-20 13:27</span>
+        </div>
+        <p class="mt-2 mb-0" th:text="${comment.content}">Comment content goes here...</p>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${discussion.archivedBy == null}">
+    <div class="card">
+      <div class="card-header">Add a Comment</div>
+      <div class="card-body">
+        <form th:action="@{/discussion/{id}/comment(id=${discussion.id})}" method="post">
+          <div class="form-group">
+            <label for="commentContent">Your Comment</label>
+            <textarea id="commentContent" name="content" class="form-control" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Comment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div th:if="${discussion.archivedBy != null}">
+    <div class="alert alert-warning" role="alert">
+      This discussion is archived. Posting comments is disabled.
+    </div>
+  </div>
+</div>
+</body>
+</html>

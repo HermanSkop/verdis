@@ -43,7 +43,11 @@ public class BootstrapDB {
 
             Discussion discussion1 = Discussion.builder().title("Discussion 1").content("This is a discussion.")
                     .author(user1).build();
-            Comment comment1 = Comment.builder().content("This is a comment.").discussion(discussion1).user(user1).build();
+            Comment comment1 = Comment.builder().content("This is a comment.").discussion(discussion1).author(user1).build();
+
+            Discussion discussion2 = Discussion.builder().title("Discussion 2").content("This is another discussion.")
+                    .author(admin).archivedBy(admin).build();
+            Comment comment2 = Comment.builder().content("This is another comment.").discussion(discussion2).author(user1).build();
 
             discussion1.setComments(List.of(comment1));
             user1.setComments(List.of(comment1));
@@ -51,6 +55,7 @@ public class BootstrapDB {
             userRepository.save(user1);
             adminRepository.save(admin);
             discussionRepository.save(discussion1);
+            discussionRepository.save(discussion2);
             commentRepository.save(comment1);
 
             System.out.println("Database initialized with sample data.");

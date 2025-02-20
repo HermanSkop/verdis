@@ -1,6 +1,7 @@
 package com.verdis.models.account;
 
 import com.verdis.config.AppConfig;
+import com.verdis.models.Comment;
 import com.verdis.models.Discussion;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -38,4 +39,7 @@ public abstract class Account {
 
     @OneToMany(mappedBy = "author")
     private List<Discussion> authoredDiscussions = List.of();
+
+    @OneToMany(mappedBy = "author")
+    private List<Comment> comments = List.of();
 }

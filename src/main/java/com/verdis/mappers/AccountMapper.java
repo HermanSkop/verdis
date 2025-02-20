@@ -9,6 +9,7 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface AccountMapper {
+    @Named("mapAccount")
     @Mapping(target = "role", expression = "java(mapRole(account))")
     AccountDto toDto(Account account);
 
@@ -20,6 +21,7 @@ public interface AccountMapper {
         }
         return null;
     }
+
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Account partialUpdate(AccountDto accountDto, @MappingTarget Account account);

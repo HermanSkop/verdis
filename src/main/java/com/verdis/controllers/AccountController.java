@@ -61,7 +61,7 @@ public class AccountController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registerDto") RegisterDto registerDto, @RequestParam("admin") String token) {
-        if (token != null) {
+        if (token != null && !token.isEmpty()) {
             accountService.registerAdmin(registerDto, token);
         } else {
             accountService.registerUser(registerDto);

@@ -1,5 +1,6 @@
 package com.verdis.models;
 
+import com.verdis.models.account.Account;
 import com.verdis.models.account.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,9 +27,12 @@ public class Comment {
     @NotBlank
     String content;
 
+    @CreationTimestamp
+    private LocalDateTime createdDateTime;
+
     @ManyToOne
     @JoinColumn(nullable = false)
-    private User user;
+    private Account author;
 
     @ManyToOne
     @JoinColumn(nullable = false)
