@@ -22,6 +22,20 @@ public interface AccountMapper {
         return null;
     }
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "authToken", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    default Account toEntity(AccountDto dto) {
+        if (dto == null || dto.getRole() == null) {
+            throw new IllegalArgumentException("Role is required to create an account entity");
+        }
+
+        return switch (dto.getRole()) {
+            case ROLE_ADMIN -> Admin.builder().email(dto.getEmail()).username(dto.getUsername()).build();
+            case ROLE_USER -> User.builder().email(dto.getEmail()).username(dto.getUsername()).build();
+        };
+    }
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Account partialUpdate(AccountDto accountDto, @MappingTarget Account account);

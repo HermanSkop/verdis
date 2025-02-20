@@ -115,4 +115,8 @@ public class AccountService {
 
         accountRepository.save(admin);
     }
+
+    public Account getAccount(Long id) {
+        return accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
+    }
 }

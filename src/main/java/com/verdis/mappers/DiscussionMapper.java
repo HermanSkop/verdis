@@ -1,5 +1,6 @@
 package com.verdis.mappers;
 
+import com.verdis.dtos.CreateDiscussionDto;
 import com.verdis.dtos.DiscussionDto;
 import com.verdis.dtos.DiscussionPreviewDto;
 import com.verdis.models.Discussion;
@@ -15,5 +16,7 @@ public interface DiscussionMapper {
 
     @Mapping(target = "author", source = "author", qualifiedByName = "mapAccount")
     DiscussionDto toDto(@NotNull Discussion discussion);
+
+    Discussion fromCreateDto(CreateDiscussionDto createDiscussionDto);
 }
 
