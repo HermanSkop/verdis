@@ -1,10 +1,12 @@
 package com.verdis.services;
 
 import com.verdis.config.AppConfig;
+import com.verdis.dtos.AccountDto;
 import com.verdis.dtos.CreateDiscussionDto;
 import com.verdis.dtos.DiscussionDto;
 import com.verdis.mappers.DiscussionMapper;
 import com.verdis.dtos.DiscussionPreviewDto;
+import com.verdis.models.Comment;
 import com.verdis.models.Discussion;
 import com.verdis.models.account.Account;
 import com.verdis.repositories.DiscussionRepository;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class DiscussionService {
@@ -39,6 +43,15 @@ public class DiscussionService {
         Account author = accountService.getAccount(createDiscussionDto.getAuthor().getId());
         Discussion discussion = discussionMapper.fromCreateDto(createDiscussionDto);
         discussion.setAuthor(author);
+        discussionRepository.save(discussion);
+    }
+
+    public void createComment(Long id, String content, AccountDto user) {
+        Discussion discussion = discussionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Discussion not found"));
+        Account author = accountService.getAccount(user.getId());
+        List<Comment> comments = discussion.getComments();
+        comments.add(Comment.builder().content(content).author(author).discussion(discussion).build());
+        discussion.setComments(comments);
         discussionRepository.save(discussion);
     }
 }

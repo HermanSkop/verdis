@@ -41,6 +41,12 @@ public class DiscussionController {
         return "discussion";
     }
 
+    @PostMapping("/discussion/{id}/comment")
+    public String comment(@PathVariable("id") Long id, @RequestParam("content") String content, HttpSession session) {
+        discussionService.createComment(id, content, (AccountDto) session.getAttribute("user"));
+        return "redirect:/discussion/" + id;
+    }
+
     @GetMapping("/discussion/create")
     public String createDiscussion(Model model) {
         model.addAttribute("discussion", new DiscussionDto());
