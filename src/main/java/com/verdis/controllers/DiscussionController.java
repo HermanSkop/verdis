@@ -69,4 +69,10 @@ public class DiscussionController {
         return "redirect:/";
     }
 
+    @PostMapping("/discussion/{discussionId}/comment/{commentId}/delete")
+    public String deleteComment(@PathVariable("discussionId") Long discussionId, @PathVariable("commentId") Long commentId, HttpSession session) {
+        discussionService.deleteComment(discussionId, commentId, (AccountDto) session.getAttribute("user"));
+        return "redirect:/discussion/" + discussionId;
+    }
+
 }

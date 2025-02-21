@@ -68,4 +68,16 @@ public class DiscussionService {
         discussion.setArchivedBy(archiver);
         discussionRepository.save(discussion);
     }
+
+    public void deleteComment(Long discussionId, Long commentId, AccountDto user) {
+        Discussion discussion = discussionRepository.findById(discussionId).orElseThrow(() -> new IllegalArgumentException("Discussion not found"));
+        Account deleter = accountService.getAccount(user.getId());
+        if (!(deleter instanceof Admin))
+            throw new IllegalArgumentException("Only an admin can delete a comment");
+
+        List<Comment> comments = discussion.getComments();
+        comments.removeIf(comment -> comment.getId().equals(commentId));
+        discussion.setComments(comments);
+        discussionRepository.save(discussion);
+    }
 }
