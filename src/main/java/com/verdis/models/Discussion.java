@@ -39,7 +39,7 @@ public class Discussion {
     @JoinColumn(nullable = false)
     private Account author;
 
-    @OneToMany(mappedBy = "discussion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "discussion", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments = List.of();
 
     @NotBlank

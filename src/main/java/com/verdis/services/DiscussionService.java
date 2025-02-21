@@ -9,11 +9,14 @@ import com.verdis.dtos.DiscussionPreviewDto;
 import com.verdis.models.Comment;
 import com.verdis.models.Discussion;
 import com.verdis.models.account.Account;
+import com.verdis.models.account.Admin;
 import com.verdis.repositories.DiscussionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,12 +34,12 @@ public class DiscussionService {
     }
 
     public Page<DiscussionPreviewDto> getDiscussions(int page) {
-        Pageable pageable = PageRequest.of(page, AppConfig.PAGE_SIZE);
+        Pageable pageable = PageRequest.of(page, AppConfig.PAGE_SIZE, Sort.Direction.DESC, "updatedDateTime");
         return discussionRepository.findAll(pageable).map(discussionMapper::toPreviewDto);
     }
 
     public DiscussionDto getDiscussion(Long id) {
-        return discussionRepository.findById(id).map(discussionMapper::toDto).orElse(null);
+        return discussionRepository.findById(id).map(discussionMapper::toDto).orElseThrow(() -> new IllegalArgumentException("Discussion not found"));
     }
 
     public void createDiscussion(CreateDiscussionDto createDiscussionDto) {
@@ -52,6 +55,17 @@ public class DiscussionService {
         List<Comment> comments = discussion.getComments();
         comments.add(Comment.builder().content(content).author(author).discussion(discussion).build());
         discussion.setComments(comments);
+        discussionRepository.save(discussion);
+    }
+
+    public void archiveDiscussion(Long id, AccountDto user) {
+        Discussion discussion = discussionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Discussion not found"));
+        Account archiver = accountService.getAccount(user.getId());
+        if (!discussion.getAuthor().equals(archiver) && !(archiver instanceof Admin))
+            throw new IllegalArgumentException("Only the author or an admin can archive a discussion");
+
+
+        discussion.setArchivedBy(archiver);
         discussionRepository.save(discussion);
     }
 }

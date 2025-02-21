@@ -12,13 +12,20 @@
 <div th:replace="~{fragments/base :: navbar}"></div>
 <div class="container mt-4">
   <div class="card mb-4">
-    <div class="card-header">
-      <h2 th:text="${discussion.title}">Discussion Title</h2>
-      <small>
-        By <span th:text="${discussion.author.username}">Author</span>
-        on <span th:text="${#temporals.format(discussion.createdDateTime, 'yyyy-MM-dd HH:mm')}">Created Date</span>
-      </small>
-      <div th:if="${discussion.archivedBy != null}" class="badge badge-danger ml-2">Archived</div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <h2 th:text="${discussion.title}">Discussion Title</h2>
+        <small>
+          By <span th:text="${discussion.author.username}">Author</span>
+          on <span th:text="${#temporals.format(discussion.createdDateTime, 'yyyy-MM-dd HH:mm')}">Created Date</span>
+        </small>
+        <div th:if="${discussion.archivedBy != null}" class="badge badge-danger ml-2">Archived</div>
+      </div>
+
+      <form th:if="${discussion.archivedBy == null and (user.role.name() == 'ROLE_ADMIN' or user.id == discussion.author.id)}"
+            th:action="@{/discussion/{id}/archive(id=${discussion.id})}" method="post">
+        <button type="submit" class="btn btn-warning">Archive</button>
+      </form>
     </div>
     <div class="card-body">
       <p th:text="${discussion.content}">Discussion content goes here...</p>
@@ -52,6 +59,7 @@
       </div>
     </div>
   </div>
+
   <div th:if="${discussion.archivedBy != null}">
     <div class="alert alert-warning" role="alert">
       This discussion is archived. Posting comments is disabled.

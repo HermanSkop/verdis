@@ -15,6 +15,6 @@ public interface DiscussionRepository extends JpaRepository<Discussion, Long> {
     @EntityGraph(attributePaths = {"author"})
     Page<Discussion> findAll(@NonNull Pageable pageable);
 
-    @EntityGraph(attributePaths = {"author", "comments", "comments.author"})
+    @EntityGraph(attributePaths = {"author", "comments", "comments.author", "archivedBy"})
     Optional<Discussion> findById(@NonNull Long id);
 }

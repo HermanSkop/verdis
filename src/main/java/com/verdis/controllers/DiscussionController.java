@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Objects;
+
 @Controller
 public class DiscussionController {
     private final DiscussionService discussionService;
@@ -36,14 +38,21 @@ public class DiscussionController {
     }
 
     @GetMapping("/discussion/{id}")
-    public String discussion(@PathVariable("id") Long id, Model model) {
+    public String discussion(@PathVariable("id") Long id, Model model, HttpSession session) {
         model.addAttribute("discussion", discussionService.getDiscussion(id));
+        model.addAttribute("user", (AccountDto) session.getAttribute("user"));
         return "discussion";
     }
 
     @PostMapping("/discussion/{id}/comment")
     public String comment(@PathVariable("id") Long id, @RequestParam("content") String content, HttpSession session) {
         discussionService.createComment(id, content, (AccountDto) session.getAttribute("user"));
+        return "redirect:/discussion/" + id;
+    }
+
+    @PostMapping("/discussion/{id}/archive")
+    public String archive(@PathVariable("id") Long id, HttpSession session) {
+        discussionService.archiveDiscussion(id, (AccountDto) session.getAttribute("user"));
         return "redirect:/discussion/" + id;
     }
 
