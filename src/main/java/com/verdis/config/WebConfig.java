@@ -24,7 +24,6 @@ public class WebConfig implements WebMvcConfigurer {
         resolver.setSuffix(".html");
         resolver.setTemplateMode(TemplateMode.HTML);
         resolver.setCharacterEncoding("UTF-8");
-        resolver.setCacheable(false); // TODO remove in production
         return resolver;
     }
 

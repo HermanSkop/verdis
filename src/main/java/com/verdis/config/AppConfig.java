@@ -1,10 +1,8 @@
 package com.verdis.config;
 
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -20,6 +18,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.verdis.repositories")
 @EnableAspectJAutoProxy
+@PropertySource("classpath:config.properties")
 public class AppConfig {
     public static final String USERNAME_PATTERN = "^[a-zA-Z0-9]{3,20}$";
     public static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";
@@ -31,13 +30,19 @@ public class AppConfig {
 
     public static final int PAGE_SIZE = 10;
 
+    private final Environment env;
+
+    public AppConfig(Environment env) {
+        this.env = env;
+    }
+
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5433/verdis");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("pjatk");
+        dataSource.setDriverClassName(env.getProperty("datasource.driver"));
+        dataSource.setUrl(env.getProperty("datasource.url"));
+        dataSource.setUsername(env.getProperty("datasource.username"));
+        dataSource.setPassword(env.getProperty("datasource.password"));
         return dataSource;
     }
 
@@ -53,10 +58,10 @@ public class AppConfig {
 
     private Properties hibernateProperties() {
         Properties properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put("hibernate.show_sql", "true");
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
-        properties.put("hibernate.format_sql", "true");
+        properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        properties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         return properties;
     }
 
