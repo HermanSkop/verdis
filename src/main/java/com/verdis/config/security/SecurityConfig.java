@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/activate").permitAll()
+                        .requestMatchers("/invite", "/discussion/{discussionId}/comment/{commentId}/delete").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .logout((logout) -> logout
