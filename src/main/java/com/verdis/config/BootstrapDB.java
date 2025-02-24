@@ -11,6 +11,8 @@ import com.verdis.repositories.DiscussionRepository;
 import com.verdis.repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Component
 public class BootstrapDB {
+    private static final Logger logger = LogManager.getLogger(BootstrapDB.class);
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final DiscussionRepository discussionRepository;
@@ -36,6 +39,9 @@ public class BootstrapDB {
     @Transactional
     public void loadData() {
         if (userRepository.count() == 0) {
+            logger.info("--------------Database is empty. Initializing with sample data.");
+            logger.error("--------------Database is empty. Initializing with sample data.");
+            logger.warn("--------------Database is empty. Initializing with sample data.");
             User user1 = User.builder().username("user").password(PasswordEncoder.encryptPassword("User1234")).email("exampleuser@mail.com")
                     .archivedDiscussions(new ArrayList<>()).comments(new ArrayList<>()).build();
             Admin admin = Admin.builder().username("admin").password(PasswordEncoder.encryptPassword("Admin1234")).email("exampleadmin@mail.com")
