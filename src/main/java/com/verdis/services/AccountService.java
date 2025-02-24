@@ -49,7 +49,10 @@ public class AccountService {
         user.setPassword(PasswordEncoder.encryptPassword(registerDto.getPassword()));
 
         accountRepository.save(user);
-        mailService.sendEmail(registerDto.getEmail(), "Activation", generateActivationLink(token));
+        mailService.sendEmail(registerDto.getEmail(), "Activation", """
+                Welcome to Verdis!
+                Use the following link to activate your account:
+                """ + generateActivationLink(token));
     }
 
     private void validateRegisterDto(RegisterDto registerDto) {
@@ -81,7 +84,7 @@ public class AccountService {
                         .orElseThrow(() -> new IllegalArgumentException("Invalid username or email: " +
                                 loginDto.getUsernameOrEmail())));
         if (!PasswordEncoder.matches(loginDto.getPassword(), account.getPassword()))
-            throw new IllegalArgumentException("Invalid password " + loginDto.getPassword());
+            throw new IllegalArgumentException("Invalid password");
 
         if (account instanceof User user) {
             if (user.getActivationToken() != null)
@@ -91,9 +94,14 @@ public class AccountService {
     }
 
     public void invite(String email) {
+        if (accountRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Account with email " + email + " already exists");
+        }
         mailService.sendEmail(email, "Invitation",
-                "You have been invited to join Verdis as an administrator. \nUse the following link to register: "
-                        + generateInvitation(email));
+                """
+                        You have been invited to join Verdis as an administrator.
+                        Use the following link to register:
+                        """ + generateInvitation(email));
     }
 
     private String generateInvitation(String email) {

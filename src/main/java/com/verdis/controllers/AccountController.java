@@ -7,7 +7,6 @@ import com.verdis.mappers.AccountMapper;
 import com.verdis.services.AccountService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,7 +40,7 @@ public class AccountController {
                 new UsernamePasswordAuthenticationToken(accountDto, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext()); // TODO resolve hardcode
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         session.setAttribute("user", accountDto);
 
         return "redirect:/";
